@@ -4,60 +4,60 @@ DESCRIBE actor;
 
 SELECT* FROM actor;
 
--- 1a
+-- list of all the actors who have Display the first and last names of all actors from the table `actor`
 SELECT first_name, last_name FROM actor;
 
--- 1b
+-- Display the first and last name of each actor in a single column in upper case letters. Name the column `Actor Name`
 SELECT concat_ws('  ',first_name, last_name)
  AS 'Actor Name'
  FROM actor;
  
- -- 2a
+ -- find the ID number, first name, and last name of an actor, of whom you know only the first name, "Joe."
  SELECT actor_id, first_name, last_name
  FROM actor
  WHERE first_name = 'JOE';
  
- -- 2b
+ -- Find all actors whose last name contain the letters `GEN`:
  SELECT* FROM actor
  WHERE last_name 
  LIKE '%GEN%';
  
- -- 2c
+ -- Find all actors whose last names contain the letters `LI`. This time, order the rows by last name and first name, in that order:
 SELECT* FROM actor 
 WHERE last_name 
 LIKE '%LI%'
 ORDER BY last_name;
 
--- 2d
+-- Display the `country_id` and `country` columns of the following countries: Afghanistan, Bangladesh, and China:
 SELECT* FROM country;
 
 SELECT country_id, country 
 FROM country
 WHERE country IN('Afghanistan', 'Bangladesh','China');
 
--- 3a
+-- Add a `middle_name` column to the table `actor`. Position it between `first_name` and `last_name`.
 ALTER TABLE actor
 ADD COLUMN middle_name VARCHAR(20)
 AFTER first_name;
 
 -- SELECT*FROM actor;  To See the updated table
 
--- 3b 
+-- Change the data type of the `middle_name` column to `blobs`.
 ALTER TABLE actor
 MODIFY COLUMN middle_name BLOB;
 
--- 3c
+-- Delete the `middle_name` column.
 ALTER TABLE actor
 DROP COLUMN middle_name;
 
 -- SELECT*FROM actor;  To See the updated table
 
--- 4a 
+-- List the last names of actors, as well as how many actors have that last name
 SELECT last_name, COUNT(*)
 FROM actor
 GROUP BY last_name;
 
--- 4b
+-- List last names of actors and the number of actors who have that last name, but only for names that are shared by at least two actors
 SELECT last_name, COUNT(*)
 FROM actor
 GROUP BY last_name
@@ -84,11 +84,11 @@ SET first_name =
    
 WHERE actor_id= 172;
 
--- 5a 
+-- locate the schema of the `address` table.
 SHOW COLUMNS FROM sakila.address; 
 SHOW CREATE TABLE sakila.address;
 
--- 6a
+-- Use `JOIN` to display the first and last names, as well as the address, of each staff member. Use the tables `staff` and `address`:
 select*FROM address;
 SELECT*FROM staff;
 
@@ -96,7 +96,7 @@ SELECT staff.first_name, staff.last_name, address,address
 FROM staff
 Inner JOIN address ON staff.address_id = address.address_id;
 
--- 6b
+-- Use `JOIN` to display the total amount rung up by each staff member in August of 2005. Use tables `staff` and `payment`.
 SELECT*FROM payment;
 SELECT staff.staff_id, first_name, last_name, SUM(amount) AS 'TOTAL AMOUNT'
 FROM staff
@@ -104,7 +104,7 @@ Inner JOIN payment
 ON staff.staff_id = payment.staff_id
 GROUP BY staff.staff_id;
 
--- 6c
+-- List each film and the number of actors who are listed for that film. 
 SELECT*FROM film;
 SELECT*FROM film_actor;
 SELECT title AS 'Film Name', COUNT(actor_id) AS 'Number Of Actors'
@@ -112,21 +112,21 @@ FROM film_actor
 INNER JOIN film ON film.film_id = film_actor.film_id
 GROUP BY title;
 
--- 6d
+-- How many copies of the film `Hunchback Impossible` exist in the inventory system?
 SELECT title AS 'Film Name', COUNT(inventory_id) AS 'Number Of Copies' 
 FROM inventory
 INNER JOIN film ON film.film_id = inventory.film_id
 GROUP BY title
 HAVING title = 'Hunchback Impossible'; 
 
--- 6e
+-- list the total paid by each customer. List the customers alphabetically by last name:
 SELECT payment.customer_id, first_name, last_name, sum(amount) AS 'Total Payment'
 FROM customer
 INNER JOIN payment ON customer.customer_id = payment.customer_id
 GROUP BY payment.customer_id
 ORDER BY last_name;  
 
--- 7a 
+-- display the titles of movies starting with the letters `K` and `Q` whose language is English. 
 SELECT*FROM film;
 SELECT*FROM language;
 
@@ -138,7 +138,8 @@ FROM language
 WHERE name = 'English')
 AND (title LIKE '%K%') OR (title LIKE '%Q%'); 
 
--- 7b
+-- display all actors who appear in the film `Alone Trip`.
+   
 SELECT*FROM film_actor;
 
 SELECT*FROM actor;
@@ -151,7 +152,7 @@ FROM film_actor
 WHERE film_id IN
 ( SELECT film_id FROM film WHERE title = 'ALONE TRIP'));
 
--- 7c
+-- the names and email addresses of all Canadian customers.
 SELECT*FROM customer;
 SELECT*FROM country;
 SELECT*FROM address;
@@ -164,7 +165,7 @@ INNER JOIN city ON address.city_id = city.city_id
 INNER JOIN country ON city.country_id = country.country_id
 WHERE country = 'Canada';  
 
--- 7d 
+-- Identify all movies categorized as family films.
 SELECT*FROM film;
 SELECT*FROM category;
 SELECT*FROM film_category;
@@ -177,7 +178,7 @@ WHERE category_id IN
 (SELECT category_id from category
 WHERE name = 'family'));
 
--- 7e
+-- Display the most frequently rented movies in descending order.
 SELECT*FROM inventory;
 SELECT*FROM rental;
 
@@ -192,7 +193,7 @@ GROUP BY title
 ORDER BY COUNT('RENTAL COUNT') DESC; 
 
 
--- 7f
+-- display how much business, in dollars, each store brought in.
 SELECT*FROM store;
 SELECT*FROM payment;
 SELECT*FROM staff;
@@ -203,14 +204,14 @@ INNER JOIN staff ON store.store_id = staff.store_id
 INNER JOIN payment ON payment.staff_id = staff.staff_id
 GROUP BY store_id; 
 
--- 7g
+-- display for each store its store ID, city, and country.
 SELECT store.store_id, city.city, country.country
 FROM store
 LEFT JOIN address ON store.address_id = address.address_id
 LEFT JOIN city ON address.city_id = city.city_id
 LEFT JOIN country ON city.country_id = country.country_id; 
 
--- 7h
+-- List the top five genres in gross revenue in descending order.
 SELECT category.name, sum(payment.amount) as 'REVENUE' FROM category 
 INNER JOIN film_category ON category.category_id = film_category.category_id
 INNER JOIN inventory ON film_category.film_id = inventory.film_id
@@ -220,7 +221,7 @@ GROUP BY name
 ORDER BY SUM(payment.amount) DESC
 LIMIT 5;
 
--- 8a
+-- easy way of viewing the Top five genres by gross revenue.
 
 CREATE VIEW top_five_genre AS 
 SELECT category.name, sum(payment.amount) as 'REVENUE' FROM category 
