@@ -1,0 +1,1 @@
+In this project, I collected data about daily stock technical indicators. Due to API  restrictions, And to gather all possible data, the file is intended to be opened via Jupyter notebook and each indicator can be extracted individually. The APIs ised are Alpha Vantage and IEX 
